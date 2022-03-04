@@ -1,0 +1,6 @@
+:class OSError.Spec
+  :is Spec
+  :const describes: "OSError"
+
+  :it "uses zero for success"
+    assert: OSError.None == 0
