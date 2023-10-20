@@ -20,11 +20,29 @@
   :fun non enoexec @'val: 8
   :fun non ebadf @'val: 9
   :fun non echild @'val: 10
-  :fun non eagain @'val: 11
+
+  :fun non eagain @'val
+    case (
+    | Platform.is_linux   | 11
+    | Platform.is_bsd     | 35
+    | Platform.is_macos   | 35
+    | Platform.is_windows | 11
+    | -1
+    )
+
   :fun non enomem @'val: 12
   :fun non eacces @'val: 13
   :fun non efault @'val: 14
-  :fun non enotblk @'val: 15
+
+  :fun non enotblk @'val
+    case (
+    | Platform.is_linux   | 15
+    | Platform.is_bsd     | 15
+    | Platform.is_macos   | 15
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
   :fun non ebusy @'val: 16
   :fun non eexist @'val: 17
   :fun non exdev @'val: 18
@@ -35,7 +53,16 @@
   :fun non enfile @'val: 23
   :fun non emfile @'val: 24
   :fun non enotty @'val: 25
-  :fun non etxtbsy @'val: 26
+
+  :fun non etxtbsy @'val
+    case (
+    | Platform.is_linux   | 26
+    | Platform.is_bsd     | 26
+    | Platform.is_macos   | 26
+    | Platform.is_windows | 139
+    | -1
+    )
+
   :fun non efbig @'val: 27
   :fun non enospc @'val: 28
   :fun non espipe @'val: 29
@@ -448,7 +475,7 @@
     case (
     | Platform.is_linux   | 95
     | Platform.is_bsd     | 45
-    | Platform.is_macos   | 45
+    | Platform.is_macos   | 102
     | Platform.is_windows | -1 // (doesn't have this error code)
     | -1
     )

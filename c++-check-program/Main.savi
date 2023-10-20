@@ -1,0 +1,25 @@
+:: Print a C++ program that checks the mapping of error codes by names,
+:: comparing what we have implemented to what the C++ compiler resolves.
+::
+:: For this C++ program to compile, all of the `static_assert`s must pass,
+:: which means all of our error code mappings in Savi must be correct.
+::
+:: Therefore we can test our error code mappings py piping the printed C++ code
+:: into a C++ compiler, with a command like this:
+:: ```
+:: savi run c++-check-program | c++ -x c++ -o /dev/null -
+:: ```
+:actor Main
+  :new (env)
+    env.out.print("#include <errno.h>")
+
+    OSError.each_supported_in_platform -> (error |
+      next if error == 0
+
+      env.out.print("static_assert( \
+        \(error.name) == \(error.u32), \
+        \"\(error.name) == \(error.u32)\" \
+      );")
+    )
+
+    env.out.print("int main() { return 0; }")

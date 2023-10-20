@@ -52,3 +52,28 @@ jobs:
   #
   # Add any custom jobs you need below this comment.
   # The area above this comment is reserved for future standard jobs.
+
+  # Use a C++ compiler to check vs the "real" error codes on each platform.
+  cpp-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, shell: bash }
+          - { os: macos-latest, shell: bash }
+          - { os: windows-latest, shell: 'wsl-bash {0}' }
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: savi-lang/action-install@v1
+      - run: savi deps update --for c++-check-program
+      - run: sudo apt-get install mingw-w64 -y
+        if: runner.os == 'Windows'
+      - run: " \
+          savi run c++-check-program \
+            ${{ runner.os == 'Windows' && '--cross-compile=x86_64-unknown-windows-msvc' || '' }} \
+            | ${{ runner.os == 'Windows' && 'x86_64-w64-mingw32-gcc' || 'c++' }} -x c++ -o /dev/null - \
+          "
