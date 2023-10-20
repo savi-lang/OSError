@@ -1,140 +1,1349 @@
-:enum OSError
-  :const bit_width U8: 32
+:numeric OSError
+  :bit_width 32
 
-  :fun name: @member_name
+  :is IntoString
+  :fun into_string(out String'ref): @name.into_string(out)
+  :fun into_string_space: @name.into_string_space
 
-  // TODO: cross-platform; see http://www.ioplex.com/~miallen/errcmp.html
+  // Note: cross-platform numeric codes have been sourced from:
+  // <http://www.ioplex.com/~miallen/errcmp.html>
 
-  :member None              0 :: Success
+  :fun non success @'val: 0
 
-  :member EPERM             1 :: Operation not permitted
-  :member ENOENT            2 :: No such file or directory
-  :member ESRCH             3 :: No such process
-  :member EINTR             4 :: Interrupted system call
-  :member EIO               5 :: I/O error
-  :member ENXIO             6 :: No such device or address
-  :member E2BIG             7 :: Argument list too long
-  :member ENOEXEC           8 :: Exec format error
-  :member EBADF             9 :: Bad file descriptor
-  :member ECHILD           10 :: No child processes
-  :member EAGAIN           11 :: Resource temporarily unavailable
-  :member ENOMEM           12 :: Out of memory
-  :member EACCES           13 :: Permission denied
-  :member EFAULT           14 :: Bad address
-  :member ENOTBLK          15 :: Block device required
-  :member EBUSY            16 :: Device or resource busy
-  :member EEXIST           17 :: File exists
-  :member EXDEV            18 :: Cross-device link
-  :member ENODEV           19 :: No such device
-  :member ENOTDIR          20 :: Not a directory
-  :member EISDIR           21 :: Is a directory
-  :member EINVAL           22 :: Invalid argument
-  :member ENFILE           23 :: File table overflow
-  :member EMFILE           24 :: Too many open files
-  :member ENOTTY           25 :: Inappropriate I/O control operation
-  :member ETXTBSY          26 :: Text file busy
-  :member EFBIG            27 :: File too large
-  :member ENOSPC           28 :: No space left on device
-  :member ESPIPE           29 :: Illegal seek
-  :member EROFS            30 :: Read-only file system
-  :member EMLINK           31 :: Too many links
-  :member EPIPE            32 :: Broken pipe
-  :member EDOM             33 :: Math argument out of domain of func
-  :member ERANGE           34 :: Math result not representable
-  :member EDEADLK          35 :: Resource deadlock would occur
-  :member ENAMETOOLONG     36 :: File name too long
-  :member ENOLCK           37 :: No record locks available
-  :member ENOSYS           38 :: Invalid system call number
-  :member ENOTEMPTY        39 :: Directory not empty
-  :member ELOOP            40 :: Too many symbolic links encountered
+  :fun non eperm @'val: 1
+  :fun non enoent @'val: 2
+  :fun non esrch @'val: 3
+  :fun non eintr @'val: 4
+  :fun non eio @'val: 5
+  :fun non enxio @'val: 6
+  :fun non e2big @'val: 7
+  :fun non enoexec @'val: 8
+  :fun non ebadf @'val: 9
+  :fun non echild @'val: 10
+  :fun non eagain @'val: 11
+  :fun non enomem @'val: 12
+  :fun non eacces @'val: 13
+  :fun non efault @'val: 14
+  :fun non enotblk @'val: 15
+  :fun non ebusy @'val: 16
+  :fun non eexist @'val: 17
+  :fun non exdev @'val: 18
+  :fun non enodev @'val: 19
+  :fun non enotdir @'val: 20
+  :fun non eisdir @'val: 21
+  :fun non einval @'val: 22
+  :fun non enfile @'val: 23
+  :fun non emfile @'val: 24
+  :fun non enotty @'val: 25
+  :fun non etxtbsy @'val: 26
+  :fun non efbig @'val: 27
+  :fun non enospc @'val: 28
+  :fun non espipe @'val: 29
+  :fun non erofs @'val: 30
+  :fun non emlink @'val: 31
+  :fun non epipe @'val: 32
+  :fun non edom @'val: 33
+  :fun non erange @'val: 34
 
-  :member ENOMSG           42 :: No message of desired type
-  :member EIDRM            43 :: Identifier removed
-  :member ECHRNG           44 :: Channel number out of range
-  :member EL2NSYNC         45 :: Level 2 not synchronized
-  :member EL3HLT           46 :: Level 3 halted
-  :member EL3RST           47 :: Level 3 reset
-  :member ELNRNG           48 :: Link number out of range
-  :member EUNATCH          49 :: Protocol driver not attached
-  :member ENOCSI           50 :: No CSI structure available
-  :member EL2HLT           51 :: Level 2 halted
-  :member EBADE            52 :: Invalid exchange
-  :member EBADR            53 :: Invalid request descriptor
-  :member EXFULL           54 :: Exchange full
-  :member ENOANO           55 :: No anode
-  :member EBADRQC          56 :: Invalid request code
-  :member EBADSLT          57 :: Invalid slot
+  :fun non edeadlk @'val
+    case (
+    | Platform.is_linux   | 35
+    | Platform.is_bsd     | 11
+    | Platform.is_macos   | 11
+    | Platform.is_windows | 36
+    | -1
+    )
 
-  :member EBFONT           59 :: Bad font file format
-  :member ENOSTR           60 :: Device not a stream
-  :member ENODATA          61 :: No data available
-  :member ETIME            62 :: Timer expired
-  :member ENOSR            63 :: Out of streams resources
-  :member ENONET           64 :: Machine is not on the network
-  :member ENOPKG           65 :: Package not installed
-  :member EREMOTE          66 :: Object is remote
-  :member ENOLINK          67 :: Link has been severed
-  :member EADV             68 :: Advertise error
-  :member ESRMNT           69 :: Srmount error
-  :member ECOMM            70 :: Communication error on send
-  :member EPROTO           71 :: Protocol error
-  :member EMULTIHOP        72 :: Multihop attempted
-  :member EDOTDOT          73 :: RFS specific error
-  :member EBADMSG          74 :: Not a data message
-  :member EOVERFLOW        75 :: Value too large for defined data type
-  :member ENOTUNIQ         76 :: Name not unique on network
-  :member EBADFD           77 :: File descriptor in bad state
-  :member EREMCHG          78 :: Remote address changed
-  :member ELIBACC          79 :: Can not access a needed shared library
-  :member ELIBBAD          80 :: Accessing a corrupted shared library
-  :member ELIBSCN          81 :: .lib section in a.out corrupted
-  :member ELIBMAX          82 :: Attempting to link in too many shared libraries
-  :member ELIBEXEC         83 :: Cannot exec a shared library directly
-  :member EILSEQ           84 :: Illegal byte sequence
-  :member ERESTART         85 :: Interrupted system call should be restarted
-  :member ESTRPIPE         86 :: Streams pipe error
-  :member EUSERS           87 :: Too many users
-  :member ENOTSOCK         88 :: Socket operation on non-socket
-  :member EDESTADDRREQ     89 :: Destination address required
-  :member EMSGSIZE         90 :: Message too long
-  :member EPROTOTYPE       91 :: Protocol wrong type for socket
-  :member ENOPROTOOPT      92 :: Protocol not available
-  :member EPROTONOSUPPORT  93 :: Protocol not supported
-  :member ESOCKTNOSUPPORT  94 :: Socket type not supported
-  :member EOPNOTSUPP       95 :: Operation not supported on transport endpoint
-  :member EPFNOSUPPORT     96 :: Protocol family not supported
-  :member EAFNOSUPPORT     97 :: Address family not supported by protocol
-  :member EADDRINUSE       98 :: Address already in use
-  :member EADDRNOTAVAIL    99 :: Cannot assign requested address
-  :member ENETDOWN        100 :: Network is down
-  :member ENETUNREACH     101 :: Network is unreachable
-  :member ENETRESET       102 :: Network dropped connection because of reset
-  :member ECONNABORTED    103 :: Software caused connection abort
-  :member ECONNRESET      104 :: Connection reset by peer
-  :member ENOBUFS         105 :: No buffer space available
-  :member EISCONN         106 :: Transport endpoint is already connected
-  :member ENOTCONN        107 :: Transport endpoint is not connected
-  :member ESHUTDOWN       108 :: Cannot send after transport endpoint shutdown
-  :member ETOOMANYREFS    109 :: Too many references: cannot splice
-  :member ETIMEDOUT       110 :: Connection timed out
-  :member ECONNREFUSED    111 :: Connection refused
-  :member EHOSTDOWN       112 :: Host is down
-  :member EHOSTUNREACH    113 :: No route to host
-  :member EALREADY        114 :: Operation already in progress
-  :member EINPROGRESS     115 :: Operation now in progress
-  :member ESTALE          116 :: Stale file handle
-  :member EUCLEAN         117 :: Structure needs cleaning
-  :member ENOTNAM         118 :: Not a XENIX named type file
-  :member ENAVAIL         119 :: No XENIX semaphores available
-  :member EISNAM          120 :: Is a named type file
-  :member EREMOTEIO       121 :: Remote I/O error
-  :member EDQUOT          122 :: Quota exceeded
-  :member ENOMEDIUM       123 :: No medium found
-  :member EMEDIUMTYPE     124 :: Wrong medium type
-  :member ECANCELED       125 :: Operation Canceled
-  :member ENOKEY          126 :: Required key not available
-  :member EKEYEXPIRED     127 :: Key has expired
-  :member EKEYREVOKED     128 :: Key has been revoked
-  :member EKEYREJECTED    129 :: Key was rejected by service
-  :member EOWNERDEAD      130 :: Owner died
-  :member ENOTRECOVERABLE 131 :: State not recoverable
+  :fun non enametoolong @'val
+    case (
+    | Platform.is_linux   | 36
+    | Platform.is_bsd     | 63
+    | Platform.is_macos   | 63
+    | Platform.is_windows | 38
+    | -1
+    )
+
+  :fun non enolck @'val
+    case (
+    | Platform.is_linux   | 37
+    | Platform.is_bsd     | 77
+    | Platform.is_macos   | 77
+    | Platform.is_windows | 39
+    | -1
+    )
+
+  :fun non enosys @'val
+    case (
+    | Platform.is_linux   | 38
+    | Platform.is_bsd     | 78
+    | Platform.is_macos   | 78
+    | Platform.is_windows | 40
+    | -1
+    )
+
+  :fun non enotempty @'val
+    case (
+    | Platform.is_linux   | 39
+    | Platform.is_bsd     | 66
+    | Platform.is_macos   | 66
+    | Platform.is_windows | 41
+    | -1
+    )
+
+  :fun non eloop @'val
+    case (
+    | Platform.is_linux   | 40
+    | Platform.is_bsd     | 62
+    | Platform.is_macos   | 62
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enomsg @'val
+    case (
+    | Platform.is_linux   | 42
+    | Platform.is_bsd     | 83
+    | Platform.is_macos   | 91
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eidrm @'val
+    case (
+    | Platform.is_linux   | 43
+    | Platform.is_bsd     | 82
+    | Platform.is_macos   | 90
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non echrng @'val
+    case (
+    | Platform.is_linux | 44
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non el2nsync @'val
+    case (
+    | Platform.is_linux | 45
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non el3hlt @'val
+    case (
+    | Platform.is_linux | 46
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non el3rst @'val
+    case (
+    | Platform.is_linux | 47
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elnrng @'val
+    case (
+    | Platform.is_linux | 48
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eunatch @'val
+    case (
+    | Platform.is_linux | 49
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enocsi @'val
+    case (
+    | Platform.is_linux | 50
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non el2hlt @'val
+    case (
+    | Platform.is_linux | 51
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebade @'val
+    case (
+    | Platform.is_linux | 52
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebadr @'val
+    case (
+    | Platform.is_linux | 53
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non exfull @'val
+    case (
+    | Platform.is_linux | 54
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enoano @'val
+    case (
+    | Platform.is_linux | 55
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebadrqc @'val
+    case (
+    | Platform.is_linux | 56
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebadslt @'val
+    case (
+    | Platform.is_linux | 57
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebfont @'val
+    case (
+    | Platform.is_linux | 59
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enostr @'val
+    case (
+    | Platform.is_linux | 60
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enodata @'val
+    case (
+    | Platform.is_linux | 61
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non etime @'val
+    case (
+    | Platform.is_linux | 62
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enosr @'val
+    case (
+    | Platform.is_linux | 63
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enonet @'val
+    case (
+    | Platform.is_linux | 64
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enopkg @'val
+    case (
+    | Platform.is_linux | 65
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eremote @'val
+    case (
+    | Platform.is_linux | 66
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enolink @'val
+    case (
+    | Platform.is_linux | 67
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eadv @'val
+    case (
+    | Platform.is_linux | 68
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non esrmnt @'val
+    case (
+    | Platform.is_linux | 69
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ecomm @'val
+    case (
+    | Platform.is_linux | 70
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eproto @'val
+    case (
+    | Platform.is_linux | 71
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non emultihop @'val
+    case (
+    | Platform.is_linux | 72
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non edotdot @'val
+    case (
+    | Platform.is_linux | 73
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebadmsg @'val
+    case (
+    | Platform.is_linux | 74
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eoverflow @'val
+    case (
+    | Platform.is_linux | 75
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enotuniq @'val
+    case (
+    | Platform.is_linux | 76
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ebadfd @'val
+    case (
+    | Platform.is_linux | 77
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eremchg @'val
+    case (
+    | Platform.is_linux | 78
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elibacc @'val
+    case (
+    | Platform.is_linux | 79
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elibbad @'val
+    case (
+    | Platform.is_linux | 80
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elibscn @'val
+    case (
+    | Platform.is_linux | 81
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elibmax @'val
+    case (
+    | Platform.is_linux | 82
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non elibexec @'val
+    case (
+    | Platform.is_linux | 83
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eilseq @'val
+    case (
+    | Platform.is_linux   | 84
+    | Platform.is_bsd     | 86
+    | Platform.is_macos   | 92
+    | Platform.is_windows | 42
+    | -1
+    )
+
+  :fun non erestart @'val
+    case (
+    | Platform.is_linux | 85
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non estrpipe @'val
+    case (
+    | Platform.is_linux | 86
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eusers @'val
+    case (
+    | Platform.is_linux   | 87
+    | Platform.is_bsd     | 68
+    | Platform.is_macos   | 68
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enotsock @'val
+    case (
+    | Platform.is_linux   | 88
+    | Platform.is_bsd     | 38
+    | Platform.is_macos   | 38
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non edestaddrreq @'val
+    case (
+    | Platform.is_linux   | 89
+    | Platform.is_bsd     | 39
+    | Platform.is_macos   | 39
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non emsgsize @'val
+    case (
+    | Platform.is_linux   | 90
+    | Platform.is_bsd     | 40
+    | Platform.is_macos   | 40
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eprototype @'val
+    case (
+    | Platform.is_linux   | 91
+    | Platform.is_bsd     | 41
+    | Platform.is_macos   | 41
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enoprotoopt @'val
+    case (
+    | Platform.is_linux   | 92
+    | Platform.is_bsd     | 42
+    | Platform.is_macos   | 42
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eprotonosupport @'val
+    case (
+    | Platform.is_linux   | 93
+    | Platform.is_bsd     | 43
+    | Platform.is_macos   | 43
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non esocktnosupport @'val
+    case (
+    | Platform.is_linux   | 94
+    | Platform.is_bsd     | 44
+    | Platform.is_macos   | 44
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eopnotsupp @'val
+    case (
+    | Platform.is_linux   | 95
+    | Platform.is_bsd     | 45
+    | Platform.is_macos   | 45
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non epfnosupport @'val
+    case (
+    | Platform.is_linux   | 96
+    | Platform.is_bsd     | 46
+    | Platform.is_macos   | 46
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eafnosupport @'val
+    case (
+    | Platform.is_linux   | 97
+    | Platform.is_bsd     | 47
+    | Platform.is_macos   | 47
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eaddrinuse @'val
+    case (
+    | Platform.is_linux   | 98
+    | Platform.is_bsd     | 48
+    | Platform.is_macos   | 48
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eaddrnotavail @'val
+    case (
+    | Platform.is_linux   | 99
+    | Platform.is_bsd     | 49
+    | Platform.is_macos   | 49
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enetdown @'val
+    case (
+    | Platform.is_linux   | 100
+    | Platform.is_bsd     | 50
+    | Platform.is_macos   | 50
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enetunreach @'val
+    case (
+    | Platform.is_linux   | 101
+    | Platform.is_bsd     | 51
+    | Platform.is_macos   | 51
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enetreset @'val
+    case (
+    | Platform.is_linux   | 102
+    | Platform.is_bsd     | 52
+    | Platform.is_macos   | 52
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non econnaborted @'val
+    case (
+    | Platform.is_linux   | 103
+    | Platform.is_bsd     | 53
+    | Platform.is_macos   | 53
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non econnreset @'val
+    case (
+    | Platform.is_linux   | 104
+    | Platform.is_bsd     | 54
+    | Platform.is_macos   | 54
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enobufs @'val
+    case (
+    | Platform.is_linux   | 105
+    | Platform.is_bsd     | 55
+    | Platform.is_macos   | 55
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eisconn @'val
+    case (
+    | Platform.is_linux   | 106
+    | Platform.is_bsd     | 56
+    | Platform.is_macos   | 56
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enotconn @'val
+    case (
+    | Platform.is_linux   | 107
+    | Platform.is_bsd     | 57
+    | Platform.is_macos   | 57
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non eshutdown @'val
+    case (
+    | Platform.is_linux   | 108
+    | Platform.is_bsd     | 58
+    | Platform.is_macos   | 58
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non etoomanyrefs @'val
+    case (
+    | Platform.is_linux   | 109
+    | Platform.is_bsd     | 59
+    | Platform.is_macos   | 59
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non etimedout @'val
+    case (
+    | Platform.is_linux   | 110
+    | Platform.is_bsd     | 60
+    | Platform.is_macos   | 60
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non econnrefused @'val
+    case (
+    | Platform.is_linux   | 111
+    | Platform.is_bsd     | 61
+    | Platform.is_macos   | 61
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non ehostdown @'val
+    case (
+    | Platform.is_linux   | 112
+    | Platform.is_bsd     | 64
+    | Platform.is_macos   | 64
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non ehostunreach @'val
+    case (
+    | Platform.is_linux   | 113
+    | Platform.is_bsd     | 65
+    | Platform.is_macos   | 65
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non ealready @'val
+    case (
+    | Platform.is_linux   | 114
+    | Platform.is_bsd     | 37
+    | Platform.is_macos   | 37
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non einprogress @'val
+    case (
+    | Platform.is_linux   | 115
+    | Platform.is_bsd     | 36
+    | Platform.is_macos   | 36
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non estale @'val
+    case (
+    | Platform.is_linux   | 116
+    | Platform.is_bsd     | 70
+    | Platform.is_macos   | 70
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non euclean @'val
+    case (
+    | Platform.is_linux | 117
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enotnam @'val
+    case (
+    | Platform.is_linux | 118
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non enavail @'val
+    case (
+    | Platform.is_linux | 119
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eisnam @'val
+    case (
+    | Platform.is_linux | 120
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non eremoteio @'val
+    case (
+    | Platform.is_linux | 121
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non edquot @'val
+    case (
+    | Platform.is_linux   | 122
+    | Platform.is_bsd     | 69
+    | Platform.is_macos   | 69
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :fun non enomedium @'val
+    case (
+    | Platform.is_linux | 123
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non emediumtype @'val
+    case (
+    | Platform.is_linux | 124
+    | -1 // (other platforms don't have this error code)
+    )
+
+  :fun non ecanceled @'val
+    case (
+    | Platform.is_linux   | -1 // (doesn't have this error code)
+    | Platform.is_bsd     | 85
+    | Platform.is_macos   | 89
+    | Platform.is_windows | -1 // (doesn't have this error code)
+    | -1
+    )
+
+  :: Yield each named error code known to this library.
+  ::
+  :: If you want to get only the error codes that are supported on the
+  :: currently targeted compilation platform / operating system,
+  :: call `each_supported_in_platform` instead.
+  :fun non each
+    yield @success
+    yield @eperm
+    yield @enoent
+    yield @esrch
+    yield @eintr
+    yield @eio
+    yield @enxio
+    yield @e2big
+    yield @enoexec
+    yield @ebadf
+    yield @echild
+    yield @eagain
+    yield @enomem
+    yield @eacces
+    yield @efault
+    yield @enotblk
+    yield @ebusy
+    yield @eexist
+    yield @exdev
+    yield @enodev
+    yield @enotdir
+    yield @eisdir
+    yield @einval
+    yield @enfile
+    yield @emfile
+    yield @enotty
+    yield @etxtbsy
+    yield @efbig
+    yield @enospc
+    yield @espipe
+    yield @erofs
+    yield @emlink
+    yield @epipe
+    yield @edom
+    yield @erange
+    yield @edeadlk
+    yield @enametoolong
+    yield @enolck
+    yield @enosys
+    yield @enotempty
+    yield @eloop
+    yield @enomsg
+    yield @eidrm
+    yield @echrng
+    yield @el2nsync
+    yield @el3hlt
+    yield @el3rst
+    yield @elnrng
+    yield @eunatch
+    yield @enocsi
+    yield @el2hlt
+    yield @ebade
+    yield @ebadr
+    yield @exfull
+    yield @enoano
+    yield @ebadrqc
+    yield @ebadslt
+    yield @ebfont
+    yield @enostr
+    yield @enodata
+    yield @etime
+    yield @enosr
+    yield @enonet
+    yield @enopkg
+    yield @eremote
+    yield @enolink
+    yield @eadv
+    yield @esrmnt
+    yield @ecomm
+    yield @eproto
+    yield @emultihop
+    yield @edotdot
+    yield @ebadmsg
+    yield @eoverflow
+    yield @enotuniq
+    yield @ebadfd
+    yield @eremchg
+    yield @elibacc
+    yield @elibbad
+    yield @elibscn
+    yield @elibmax
+    yield @elibexec
+    yield @eilseq
+    yield @erestart
+    yield @estrpipe
+    yield @eusers
+    yield @enotsock
+    yield @edestaddrreq
+    yield @emsgsize
+    yield @eprototype
+    yield @enoprotoopt
+    yield @eprotonosupport
+    yield @esocktnosupport
+    yield @eopnotsupp
+    yield @epfnosupport
+    yield @eafnosupport
+    yield @eaddrinuse
+    yield @eaddrnotavail
+    yield @enetdown
+    yield @enetunreach
+    yield @enetreset
+    yield @econnaborted
+    yield @econnreset
+    yield @enobufs
+    yield @eisconn
+    yield @enotconn
+    yield @eshutdown
+    yield @etoomanyrefs
+    yield @etimedout
+    yield @econnrefused
+    yield @ehostdown
+    yield @ehostunreach
+    yield @ealready
+    yield @einprogress
+    yield @estale
+    yield @euclean
+    yield @enotnam
+    yield @enavail
+    yield @eisnam
+    yield @eremoteio
+    yield @edquot
+    yield @enomedium
+    yield @emediumtype
+    yield @ecanceled
+
+  :: Yield each named error code supported by the currently targeted platform.
+  :fun non each_supported_in_platform
+    @each -> (error |
+      yield error unless error == -1
+    )
+
+  :fun name String
+    case @ == (
+    | -1               | "UNSUPPORTED_ERROR_CODE"
+    | @success         | "SUCCESS"
+    | @eperm           | "EPERM"
+    | @enoent          | "ENOENT"
+    | @esrch           | "ESRCH"
+    | @eintr           | "EINTR"
+    | @eio             | "EIO"
+    | @enxio           | "ENXIO"
+    | @e2big           | "E2BIG"
+    | @enoexec         | "ENOEXEC"
+    | @ebadf           | "EBADF"
+    | @echild          | "ECHILD"
+    | @eagain          | "EAGAIN"
+    | @enomem          | "ENOMEM"
+    | @eacces          | "EACCES"
+    | @efault          | "EFAULT"
+    | @enotblk         | "ENOTBLK"
+    | @ebusy           | "EBUSY"
+    | @eexist          | "EEXIST"
+    | @exdev           | "EXDEV"
+    | @enodev          | "ENODEV"
+    | @enotdir         | "ENOTDIR"
+    | @eisdir          | "EISDIR"
+    | @einval          | "EINVAL"
+    | @enfile          | "ENFILE"
+    | @emfile          | "EMFILE"
+    | @enotty          | "ENOTTY"
+    | @etxtbsy         | "ETXTBSY"
+    | @efbig           | "EFBIG"
+    | @enospc          | "ENOSPC"
+    | @espipe          | "ESPIPE"
+    | @erofs           | "EROFS"
+    | @emlink          | "EMLINK"
+    | @epipe           | "EPIPE"
+    | @edom            | "EDOM"
+    | @erange          | "ERANGE"
+    | @edeadlk         | "EDEADLK"
+    | @enametoolong    | "ENAMETOOLONG"
+    | @enolck          | "ENOLCK"
+    | @enosys          | "ENOSYS"
+    | @enotempty       | "ENOTEMPTY"
+    | @eloop           | "ELOOP"
+    | @enomsg          | "ENOMSG"
+    | @eidrm           | "EIDRM"
+    | @echrng          | "ECHRNG"
+    | @el2nsync        | "EL2NSYNC"
+    | @el3hlt          | "EL3HLT"
+    | @el3rst          | "EL3RST"
+    | @elnrng          | "ELNRNG"
+    | @eunatch         | "EUNATCH"
+    | @enocsi          | "ENOCSI"
+    | @el2hlt          | "EL2HLT"
+    | @ebade           | "EBADE"
+    | @ebadr           | "EBADR"
+    | @exfull          | "EXFULL"
+    | @enoano          | "ENOANO"
+    | @ebadrqc         | "EBADRQC"
+    | @ebadslt         | "EBADSLT"
+    | @ebfont          | "EBFONT"
+    | @enostr          | "ENOSTR"
+    | @enodata         | "ENODATA"
+    | @etime           | "ETIME"
+    | @enosr           | "ENOSR"
+    | @enonet          | "ENONET"
+    | @enopkg          | "ENOPKG"
+    | @eremote         | "EREMOTE"
+    | @enolink         | "ENOLINK"
+    | @eadv            | "EADV"
+    | @esrmnt          | "ESRMNT"
+    | @ecomm           | "ECOMM"
+    | @eproto          | "EPROTO"
+    | @emultihop       | "EMULTIHOP"
+    | @edotdot         | "EDOTDOT"
+    | @ebadmsg         | "EBADMSG"
+    | @eoverflow       | "EOVERFLOW"
+    | @enotuniq        | "ENOTUNIQ"
+    | @ebadfd          | "EBADFD"
+    | @eremchg         | "EREMCHG"
+    | @elibacc         | "ELIBACC"
+    | @elibbad         | "ELIBBAD"
+    | @elibscn         | "ELIBSCN"
+    | @elibmax         | "ELIBMAX"
+    | @elibexec        | "ELIBEXEC"
+    | @eilseq          | "EILSEQ"
+    | @erestart        | "ERESTART"
+    | @estrpipe        | "ESTRPIPE"
+    | @eusers          | "EUSERS"
+    | @enotsock        | "ENOTSOCK"
+    | @edestaddrreq    | "EDESTADDRREQ"
+    | @emsgsize        | "EMSGSIZE"
+    | @eprototype      | "EPROTOTYPE"
+    | @enoprotoopt     | "ENOPROTOOPT"
+    | @eprotonosupport | "EPROTONOSUPPORT"
+    | @esocktnosupport | "ESOCKTNOSUPPORT"
+    | @eopnotsupp      | "EOPNOTSUPP"
+    | @epfnosupport    | "EPFNOSUPPORT"
+    | @eafnosupport    | "EAFNOSUPPORT"
+    | @eaddrinuse      | "EADDRINUSE"
+    | @eaddrnotavail   | "EADDRNOTAVAIL"
+    | @enetdown        | "ENETDOWN"
+    | @enetunreach     | "ENETUNREACH"
+    | @enetreset       | "ENETRESET"
+    | @econnaborted    | "ECONNABORTED"
+    | @econnreset      | "ECONNRESET"
+    | @enobufs         | "ENOBUFS"
+    | @eisconn         | "EISCONN"
+    | @enotconn        | "ENOTCONN"
+    | @eshutdown       | "ESHUTDOWN"
+    | @etoomanyrefs    | "ETOOMANYREFS"
+    | @etimedout       | "ETIMEDOUT"
+    | @econnrefused    | "ECONNREFUSED"
+    | @ehostdown       | "EHOSTDOWN"
+    | @ehostunreach    | "EHOSTUNREACH"
+    | @ealready        | "EALREADY"
+    | @einprogress     | "EINPROGRESS"
+    | @estale          | "ESTALE"
+    | @euclean         | "EUCLEAN"
+    | @enotnam         | "ENOTNAM"
+    | @enavail         | "ENAVAIL"
+    | @eisnam          | "EISNAM"
+    | @eremoteio       | "EREMOTEIO"
+    | @edquot          | "EDQUOT"
+    | @enomedium       | "ENOMEDIUM"
+    | @emediumtype     | "EMEDIUMTYPE"
+    | @ecanceled       | "ECANCELED"
+    |                    "UNKNOWN_ERROR_CODE_\(@u32)"
+    )
+
+  :fun description String
+    case @ == (
+    | -1               | "Unsupported error code for this platform"
+    | @success         | "Success"
+    | @eperm           | "Operation not permitted"
+    | @enoent          | "No such file or directory"
+    | @esrch           | "No such process"
+    | @eintr           | "Interrupted system call"
+    | @eio             | "I/O error"
+    | @enxio           | "No such device or address"
+    | @e2big           | "Argument list too long"
+    | @enoexec         | "Exec format error"
+    | @ebadf           | "Bad file descriptor"
+    | @echild          | "No child processes"
+    | @eagain          | "Resource temporarily unavailable"
+    | @enomem          | "Out of memory"
+    | @eacces          | "Permission denied"
+    | @efault          | "Bad address"
+    | @enotblk         | "Block device required"
+    | @ebusy           | "Device or resource busy"
+    | @eexist          | "File exists"
+    | @exdev           | "Cross-device link"
+    | @enodev          | "No such device"
+    | @enotdir         | "Not a directory"
+    | @eisdir          | "Is a directory"
+    | @einval          | "Invalid argument"
+    | @enfile          | "File table overflow"
+    | @emfile          | "Too many open files"
+    | @enotty          | "Inappropriate I/O control operation"
+    | @etxtbsy         | "Text file busy"
+    | @efbig           | "File too large"
+    | @enospc          | "No space left on device"
+    | @espipe          | "Illegal seek"
+    | @erofs           | "Read-only file system"
+    | @emlink          | "Too many links"
+    | @epipe           | "Broken pipe"
+    | @edom            | "Math argument out of domain of func"
+    | @erange          | "Math result not representable"
+    | @edeadlk         | "Resource deadlock would occur"
+    | @enametoolong    | "File name too long"
+    | @enolck          | "No record locks available"
+    | @enosys          | "Invalid system call number"
+    | @enotempty       | "Directory not empty"
+    | @eloop           | "Too many symbolic links encountered"
+    | @enomsg          | "No message of desired type"
+    | @eidrm           | "Identifier removed"
+    | @echrng          | "Channel number out of range"
+    | @el2nsync        | "Level 2 not synchronized"
+    | @el3hlt          | "Level 3 halted"
+    | @el3rst          | "Level 3 reset"
+    | @elnrng          | "Link number out of range"
+    | @eunatch         | "Protocol driver not attached"
+    | @enocsi          | "No CSI structure available"
+    | @el2hlt          | "Level 2 halted"
+    | @ebade           | "Invalid exchange"
+    | @ebadr           | "Invalid request descriptor"
+    | @exfull          | "Exchange full"
+    | @enoano          | "No anode"
+    | @ebadrqc         | "Invalid request code"
+    | @ebadslt         | "Invalid slot"
+    | @ebfont          | "Bad font file format"
+    | @enostr          | "Device not a stream"
+    | @enodata         | "No data available"
+    | @etime           | "Timer expired"
+    | @enosr           | "Out of streams resources"
+    | @enonet          | "Machine is not on the network"
+    | @enopkg          | "Package not installed"
+    | @eremote         | "Object is remote"
+    | @enolink         | "Link has been severed"
+    | @eadv            | "Advertise error"
+    | @esrmnt          | "Srmount error"
+    | @ecomm           | "Communication error on send"
+    | @eproto          | "Protocol error"
+    | @emultihop       | "Multihop attempted"
+    | @edotdot         | "RFS specific error"
+    | @ebadmsg         | "Not a data message"
+    | @eoverflow       | "Value too large for defined data type"
+    | @enotuniq        | "Name not unique on network"
+    | @ebadfd          | "File descriptor in bad state"
+    | @eremchg         | "Remote address changed"
+    | @elibacc         | "Can not access a needed shared library"
+    | @elibbad         | "Accessing a corrupted shared library"
+    | @elibscn         | ".lib section in a.out corrupted"
+    | @elibmax         | "Attempting to link in too many shared libraries"
+    | @elibexec        | "Cannot exec a shared library directly"
+    | @eilseq          | "Illegal byte sequence"
+    | @erestart        | "Interrupted system call should be restarted"
+    | @estrpipe        | "Streams pipe error"
+    | @eusers          | "Too many users"
+    | @enotsock        | "Socket operation on non-socket"
+    | @edestaddrreq    | "Destination address required"
+    | @emsgsize        | "Message too long"
+    | @eprototype      | "Protocol wrong type for socket"
+    | @enoprotoopt     | "Protocol not available"
+    | @eprotonosupport | "Protocol not supported"
+    | @esocktnosupport | "Socket type not supported"
+    | @eopnotsupp      | "Operation not supported on transport endpoint"
+    | @epfnosupport    | "Protocol family not supported"
+    | @eafnosupport    | "Address family not supported by protocol"
+    | @eaddrinuse      | "Address already in use"
+    | @eaddrnotavail   | "Cannot assign requested address"
+    | @enetdown        | "Network is down"
+    | @enetunreach     | "Network is unreachable"
+    | @enetreset       | "Network dropped connection because of reset"
+    | @econnaborted    | "Software caused connection abort"
+    | @econnreset      | "Connection reset by peer"
+    | @enobufs         | "No buffer space available"
+    | @eisconn         | "Transport endpoint is already connected"
+    | @enotconn        | "Transport endpoint is not connected"
+    | @eshutdown       | "Cannot send after transport endpoint shutdown"
+    | @etoomanyrefs    | "Too many references: cannot splice"
+    | @etimedout       | "Connection timed out"
+    | @econnrefused    | "Connection refused"
+    | @ehostdown       | "Host is down"
+    | @ehostunreach    | "No route to host"
+    | @ealready        | "Operation already in progress"
+    | @einprogress     | "Operation now in progress"
+    | @estale          | "Stale file handle"
+    | @euclean         | "Structure needs cleaning"
+    | @enotnam         | "Not a XENIX named type file"
+    | @enavail         | "No XENIX semaphores available"
+    | @eisnam          | "Is a named type file"
+    | @eremoteio       | "Remote I/O error"
+    | @edquot          | "Quota exceeded"
+    | @enomedium       | "No medium found"
+    | @emediumtype     | "Wrong medium type"
+    | @ecanceled       | "Operation Canceled"
+    |                    "Unknown error code \(@u32)"
+    )
+
+  :: DEPRECATED: Use `success` instead.
+  :fun non None: @success
+  :: DEPRECATED: Use `eperm` instead.
+  :fun non EPERM: @eperm
+  :: DEPRECATED: Use `enoent` instead.
+  :fun non ENOENT: @enoent
+  :: DEPRECATED: Use `esrch` instead.
+  :fun non ESRCH: @esrch
+  :: DEPRECATED: Use `eintr` instead.
+  :fun non EINTR: @eintr
+  :: DEPRECATED: Use `eio` instead.
+  :fun non EIO: @eio
+  :: DEPRECATED: Use `enxio` instead.
+  :fun non ENXIO: @enxio
+  :: DEPRECATED: Use `e2big` instead.
+  :fun non E2BIG: @e2big
+  :: DEPRECATED: Use `enoexec` instead.
+  :fun non ENOEXEC: @enoexec
+  :: DEPRECATED: Use `ebadf` instead.
+  :fun non EBADF: @ebadf
+  :: DEPRECATED: Use `echild` instead.
+  :fun non ECHILD: @echild
+  :: DEPRECATED: Use `eagain` instead.
+  :fun non EAGAIN: @eagain
+  :: DEPRECATED: Use `enomem` instead.
+  :fun non ENOMEM: @enomem
+  :: DEPRECATED: Use `eacces` instead.
+  :fun non EACCES: @eacces
+  :: DEPRECATED: Use `efault` instead.
+  :fun non EFAULT: @efault
+  :: DEPRECATED: Use `enotblk` instead.
+  :fun non ENOTBLK: @enotblk
+  :: DEPRECATED: Use `ebusy` instead.
+  :fun non EBUSY: @ebusy
+  :: DEPRECATED: Use `eexist` instead.
+  :fun non EEXIST: @eexist
+  :: DEPRECATED: Use `exdev` instead.
+  :fun non EXDEV: @exdev
+  :: DEPRECATED: Use `enodev` instead.
+  :fun non ENODEV: @enodev
+  :: DEPRECATED: Use `enotdir` instead.
+  :fun non ENOTDIR: @enotdir
+  :: DEPRECATED: Use `eisdir` instead.
+  :fun non EISDIR: @eisdir
+  :: DEPRECATED: Use `einval` instead.
+  :fun non EINVAL: @einval
+  :: DEPRECATED: Use `enfile` instead.
+  :fun non ENFILE: @enfile
+  :: DEPRECATED: Use `emfile` instead.
+  :fun non EMFILE: @emfile
+  :: DEPRECATED: Use `enotty` instead.
+  :fun non ENOTTY: @enotty
+  :: DEPRECATED: Use `etxtbsy` instead.
+  :fun non ETXTBSY: @etxtbsy
+  :: DEPRECATED: Use `efbig` instead.
+  :fun non EFBIG: @efbig
+  :: DEPRECATED: Use `enospc` instead.
+  :fun non ENOSPC: @enospc
+  :: DEPRECATED: Use `espipe` instead.
+  :fun non ESPIPE: @espipe
+  :: DEPRECATED: Use `erofs` instead.
+  :fun non EROFS: @erofs
+  :: DEPRECATED: Use `emlink` instead.
+  :fun non EMLINK: @emlink
+  :: DEPRECATED: Use `epipe` instead.
+  :fun non EPIPE: @epipe
+  :: DEPRECATED: Use `edom` instead.
+  :fun non EDOM: @edom
+  :: DEPRECATED: Use `erange` instead.
+  :fun non ERANGE: @erange
+  :: DEPRECATED: Use `edeadlk` instead.
+  :fun non EDEADLK: @edeadlk
+  :: DEPRECATED: Use `enametoolong` instead.
+  :fun non ENAMETOOLONG: @enametoolong
+  :: DEPRECATED: Use `enolck` instead.
+  :fun non ENOLCK: @enolck
+  :: DEPRECATED: Use `enosys` instead.
+  :fun non ENOSYS: @enosys
+  :: DEPRECATED: Use `enotempty` instead.
+  :fun non ENOTEMPTY: @enotempty
+  :: DEPRECATED: Use `eloop` instead.
+  :fun non ELOOP: @eloop
+  :: DEPRECATED: Use `enomsg` instead.
+  :fun non ENOMSG: @enomsg
+  :: DEPRECATED: Use `eidrm` instead.
+  :fun non EIDRM: @eidrm
+  :: DEPRECATED: Use `echrng` instead.
+  :fun non ECHRNG: @echrng
+  :: DEPRECATED: Use `el2nsync` instead.
+  :fun non EL2NSYNC: @el2nsync
+  :: DEPRECATED: Use `el3hlt` instead.
+  :fun non EL3HLT: @el3hlt
+  :: DEPRECATED: Use `el3rst` instead.
+  :fun non EL3RST: @el3rst
+  :: DEPRECATED: Use `elnrng` instead.
+  :fun non ELNRNG: @elnrng
+  :: DEPRECATED: Use `eunatch` instead.
+  :fun non EUNATCH: @eunatch
+  :: DEPRECATED: Use `enocsi` instead.
+  :fun non ENOCSI: @enocsi
+  :: DEPRECATED: Use `el2hlt` instead.
+  :fun non EL2HLT: @el2hlt
+  :: DEPRECATED: Use `ebade` instead.
+  :fun non EBADE: @ebade
+  :: DEPRECATED: Use `ebadr` instead.
+  :fun non EBADR: @ebadr
+  :: DEPRECATED: Use `exfull` instead.
+  :fun non EXFULL: @exfull
+  :: DEPRECATED: Use `enoano` instead.
+  :fun non ENOANO: @enoano
+  :: DEPRECATED: Use `ebadrqc` instead.
+  :fun non EBADRQC: @ebadrqc
+  :: DEPRECATED: Use `ebadslt` instead.
+  :fun non EBADSLT: @ebadslt
+  :: DEPRECATED: Use `ebfont` instead.
+  :fun non EBFONT: @ebfont
+  :: DEPRECATED: Use `enostr` instead.
+  :fun non ENOSTR: @enostr
+  :: DEPRECATED: Use `enodata` instead.
+  :fun non ENODATA: @enodata
+  :: DEPRECATED: Use `etime` instead.
+  :fun non ETIME: @etime
+  :: DEPRECATED: Use `enosr` instead.
+  :fun non ENOSR: @enosr
+  :: DEPRECATED: Use `enonet` instead.
+  :fun non ENONET: @enonet
+  :: DEPRECATED: Use `enopkg` instead.
+  :fun non ENOPKG: @enopkg
+  :: DEPRECATED: Use `eremote` instead.
+  :fun non EREMOTE: @eremote
+  :: DEPRECATED: Use `enolink` instead.
+  :fun non ENOLINK: @enolink
+  :: DEPRECATED: Use `eadv` instead.
+  :fun non EADV: @eadv
+  :: DEPRECATED: Use `esrmnt` instead.
+  :fun non ESRMNT: @esrmnt
+  :: DEPRECATED: Use `ecomm` instead.
+  :fun non ECOMM: @ecomm
+  :: DEPRECATED: Use `eproto` instead.
+  :fun non EPROTO: @eproto
+  :: DEPRECATED: Use `emultihop` instead.
+  :fun non EMULTIHOP: @emultihop
+  :: DEPRECATED: Use `edotdot` instead.
+  :fun non EDOTDOT: @edotdot
+  :: DEPRECATED: Use `ebadmsg` instead.
+  :fun non EBADMSG: @ebadmsg
+  :: DEPRECATED: Use `eoverflow` instead.
+  :fun non EOVERFLOW: @eoverflow
+  :: DEPRECATED: Use `enotuniq` instead.
+  :fun non ENOTUNIQ: @enotuniq
+  :: DEPRECATED: Use `ebadfd` instead.
+  :fun non EBADFD: @ebadfd
+  :: DEPRECATED: Use `eremchg` instead.
+  :fun non EREMCHG: @eremchg
+  :: DEPRECATED: Use `elibacc` instead.
+  :fun non ELIBACC: @elibacc
+  :: DEPRECATED: Use `elibbad` instead.
+  :fun non ELIBBAD: @elibbad
+  :: DEPRECATED: Use `elibscn` instead.
+  :fun non ELIBSCN: @elibscn
+  :: DEPRECATED: Use `elibmax` instead.
+  :fun non ELIBMAX: @elibmax
+  :: DEPRECATED: Use `elibexec` instead.
+  :fun non ELIBEXEC: @elibexec
+  :: DEPRECATED: Use `eilseq` instead.
+  :fun non EILSEQ: @eilseq
+  :: DEPRECATED: Use `erestart` instead.
+  :fun non ERESTART: @erestart
+  :: DEPRECATED: Use `estrpipe` instead.
+  :fun non ESTRPIPE: @estrpipe
+  :: DEPRECATED: Use `eusers` instead.
+  :fun non EUSERS: @eusers
+  :: DEPRECATED: Use `enotsock` instead.
+  :fun non ENOTSOCK: @enotsock
+  :: DEPRECATED: Use `edestaddrreq` instead.
+  :fun non EDESTADDRREQ: @edestaddrreq
+  :: DEPRECATED: Use `emsgsize` instead.
+  :fun non EMSGSIZE: @emsgsize
+  :: DEPRECATED: Use `eprototype` instead.
+  :fun non EPROTOTYPE: @eprototype
+  :: DEPRECATED: Use `enoprotoopt` instead.
+  :fun non ENOPROTOOPT: @enoprotoopt
+  :: DEPRECATED: Use `eprotonosupport` instead.
+  :fun non EPROTONOSUPPORT: @eprotonosupport
+  :: DEPRECATED: Use `esocktnosupport` instead.
+  :fun non ESOCKTNOSUPPORT: @esocktnosupport
+  :: DEPRECATED: Use `eopnotsupp` instead.
+  :fun non EOPNOTSUPP: @eopnotsupp
+  :: DEPRECATED: Use `epfnosupport` instead.
+  :fun non EPFNOSUPPORT: @epfnosupport
+  :: DEPRECATED: Use `eafnosupport` instead.
+  :fun non EAFNOSUPPORT: @eafnosupport
+  :: DEPRECATED: Use `eaddrinuse` instead.
+  :fun non EADDRINUSE: @eaddrinuse
+  :: DEPRECATED: Use `eaddrnotavail` instead.
+  :fun non EADDRNOTAVAIL: @eaddrnotavail
+  :: DEPRECATED: Use `enetdown` instead.
+  :fun non ENETDOWN: @enetdown
+  :: DEPRECATED: Use `enetunreach` instead.
+  :fun non ENETUNREACH: @enetunreach
+  :: DEPRECATED: Use `enetreset` instead.
+  :fun non ENETRESET: @enetreset
+  :: DEPRECATED: Use `econnaborted` instead.
+  :fun non ECONNABORTED: @econnaborted
+  :: DEPRECATED: Use `econnreset` instead.
+  :fun non ECONNRESET: @econnreset
+  :: DEPRECATED: Use `enobufs` instead.
+  :fun non ENOBUFS: @enobufs
+  :: DEPRECATED: Use `eisconn` instead.
+  :fun non EISCONN: @eisconn
+  :: DEPRECATED: Use `enotconn` instead.
+  :fun non ENOTCONN: @enotconn
+  :: DEPRECATED: Use `eshutdown` instead.
+  :fun non ESHUTDOWN: @eshutdown
+  :: DEPRECATED: Use `etoomanyrefs` instead.
+  :fun non ETOOMANYREFS: @etoomanyrefs
+  :: DEPRECATED: Use `etimedout` instead.
+  :fun non ETIMEDOUT: @etimedout
+  :: DEPRECATED: Use `econnrefused` instead.
+  :fun non ECONNREFUSED: @econnrefused
+  :: DEPRECATED: Use `ehostdown` instead.
+  :fun non EHOSTDOWN: @ehostdown
+  :: DEPRECATED: Use `ehostunreach` instead.
+  :fun non EHOSTUNREACH: @ehostunreach
+  :: DEPRECATED: Use `ealready` instead.
+  :fun non EALREADY: @ealready
+  :: DEPRECATED: Use `einprogress` instead.
+  :fun non EINPROGRESS: @einprogress
+  :: DEPRECATED: Use `estale` instead.
+  :fun non ESTALE: @estale
+  :: DEPRECATED: Use `euclean` instead.
+  :fun non EUCLEAN: @euclean
+  :: DEPRECATED: Use `enotnam` instead.
+  :fun non ENOTNAM: @enotnam
+  :: DEPRECATED: Use `enavail` instead.
+  :fun non ENAVAIL: @enavail
+  :: DEPRECATED: Use `eisnam` instead.
+  :fun non EISNAM: @eisnam
+  :: DEPRECATED: Use `eremoteio` instead.
+  :fun non EREMOTEIO: @eremoteio
+  :: DEPRECATED: Use `edquot` instead.
+  :fun non EDQUOT: @edquot
+  :: DEPRECATED: Use `enomedium` instead.
+  :fun non ENOMEDIUM: @enomedium
+  :: DEPRECATED: Use `emediumtype` instead.
+  :fun non EMEDIUMTYPE: @emediumtype
+  :: DEPRECATED: Use `ecanceled` instead.
+  :fun non ECANCELED: @ecanceled

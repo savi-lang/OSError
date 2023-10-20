@@ -3,4 +3,39 @@
   :const describes: "OSError"
 
   :it "uses zero for success"
-    assert: OSError.None == 0
+    assert: OSError.success == 0
+
+  :it "lists all the error codes supported on the current platform"
+    count = 0
+    OSError.each_supported_in_platform -> (error |
+      assert: error != -1
+      count += 1
+    )
+
+    case (
+    | Platform.is_linux   | assert: count == 123
+    | Platform.is_bsd     | assert: count == 76
+    | Platform.is_macos   | assert: count == 76
+    | Platform.is_windows | assert: count == 41
+    |                       assert: count == 0 // (unsupported platform)
+    )
+
+  :it "shows the name for all supported error codes"
+    OSError.each_supported_in_platform -> (error |
+      assert: !error.name.includes("unknown error code")
+    )
+
+    assert: OSError.success.name == "SUCCESS"
+    assert: OSError.eperm.name == "EPERM"
+    assert: OSError[-1].name == "UNSUPPORTED_ERROR_CODE"
+    assert: OSError[999].name == "UNKNOWN_ERROR_CODE_999"
+
+  :it "shows the description for all supported error codes"
+    OSError.each_supported_in_platform -> (error |
+      assert: !error.description.includes("unknown error code")
+    )
+
+    assert: OSError.success.description == "Success"
+    assert: OSError.eperm.description == "Operation not permitted"
+    assert: OSError[-1].description == "Unsupported error code for this platform"
+    assert: OSError[999].description == "Unknown error code 999"
