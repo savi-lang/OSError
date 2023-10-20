@@ -16,7 +16,7 @@
     | Platform.is_linux   | assert: count == 123
     | Platform.is_bsd     | assert: count == 76
     | Platform.is_macos   | assert: count == 76
-    | Platform.is_windows | assert: count == 41
+    | Platform.is_windows | assert: count == 40
     |                       assert: count == 0 // (unsupported platform)
     )
 
