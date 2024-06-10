@@ -39,3 +39,12 @@
     assert: OSError.eperm.description == "Operation not permitted"
     assert: OSError[-1].description == "Unsupported error code for this platform"
     assert: OSError[999].description == "Unknown error code 999"
+
+  :it "converts a U32 to an error code if it's a valid one"
+    assert: OSError.from_u32!(0) == OSError.success
+    assert: OSError.from_u32!(1) == OSError.eperm
+    assert error: OSError.from_u32!(999)
+
+    OSError.each_supported_in_platform -> (error |
+      assert: OSError.from_u32!(error.u32) == error
+    )
