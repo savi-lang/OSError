@@ -5,6 +5,12 @@
   :fun into_string(out String'ref): @name.into_string(out)
   :fun into_string_space: @name.into_string_space
 
+  :fun non from_u32!(value U32) OSError
+    @each_supported_in_platform -> (error |
+      return error if error.u32 == value
+    )
+    error!
+
   // Note: cross-platform numeric codes have been sourced from:
   // <http://www.ioplex.com/~miallen/errcmp.html>
 
